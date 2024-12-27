@@ -2,6 +2,8 @@
 
 Bu proje, Romatem web sitesi için Schema.org markup'larını otomatik olarak oluşturan bir araçtır.
 
+⚠️ **ÖNEMLİ NOT**: Bu yazılım Romatem Fizik Tedavi ve Rehabilitasyon Hastanesi'nin özel kullanımı için geliştirilmiştir. Ticari kullanımı ve dağıtımı yasaktır.
+
 ## Özellikler
 
 - Medical Web Page ve Article schema tiplerini destekler
@@ -21,7 +23,7 @@ Bu proje, Romatem web sitesi için Schema.org markup'larını otomatik olarak ol
 
 ```bash
 # Projeyi klonlayın
-git clone https://github.com/seyitturgut/schema-generator.git
+git clone https://github.com/seyidturgut/SchemaPro.git
 
 # Bağımlılıkları yükleyin
 npm install
@@ -41,3 +43,11 @@ npm run dev
 ## Lisans
 
 MIT
+
+## Yasal Uyarı
+
+Bu yazılım Romatem Fizik Tedavi ve Rehabilitasyon Hastanesi için özel olarak geliştirilmiştir. Tüm hakları saklıdır. İzinsiz kullanımı, kopyalanması, değiştirilmesi veya dağıtılması kesinlikle yasaktır.
+
+## Geliştirici
+
+Seyid Turgut

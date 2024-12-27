@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 
 exports.handler = async function(event, context) {
   // Only allow POST requests
@@ -19,14 +20,24 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // Launch browser
+    // Launch browser with Netlify's Chrome binary
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
-    const page = await browser.newPage();
 
-    // Navigate to URL
-    await page.goto(url, { waitUntil: 'networkidle0' });
+    const page = await browser.newPage();
+    
+    // Set user agent to avoid being blocked
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
+    // Navigate to URL with timeout
+    await page.goto(url, { 
+      waitUntil: 'networkidle0',
+      timeout: 15000 
+    });
 
     // Extract data
     const data = await page.evaluate(() => {
@@ -59,17 +70,36 @@ exports.handler = async function(event, context) {
 
     await browser.close();
 
+    // Validate and clean the response
+    const cleanData = {
+      title: data.title || '',
+      description: data.description || '',
+      image: data.image || '',
+      datePublished: data.datePublished || '',
+      dateModified: data.dateModified || '',
+      content: data.content || '',
+    };
+
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(cleanData),
     };
   } catch (error) {
     console.error('Scraping error:', error);
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
       body: JSON.stringify({ error: error.message }),
     };
   }
